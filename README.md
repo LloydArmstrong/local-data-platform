@@ -1,5 +1,4 @@
 # Containerize Database with Webpage
-*Completed by **Lloyd Armstrong***
 
 This project is a basic minimalistic 3 container build that allows data from a database to get displayed on your browser's localhost. Refresh = New Data. 
 
