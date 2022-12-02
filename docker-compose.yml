@@ -18,7 +18,7 @@ services:
 
   php-container:
     build:
-      context: C:\Users\Admin\dockerfiles\
+      context: .
       dockerfile: Dockerfile
     container_name: php-container
     expose:
