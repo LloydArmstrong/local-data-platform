@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webserver
+spec:
+  selector:
+    matchLabels:
+      app: webserver
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: webserver
+    spec:
+      containers:
+      - name: webserver
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: default.conf
+          mountPath: ./default.conf:/etc/nginx/conf.d/default.conf
+      volumes:
+      - name: default.conf
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webserver
+  labels:
+    run: webserver
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    run: webserver
+
+
+
+  nginx-container:
+    image: nginx:latest
+    container_name: nginx-container
+    ports:
+     - "80:80"
+    expose:
+      - "9000"
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+      - ./index.php:/var/www/index.php
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    links:
+      - php-container
+---
+  php-container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: php-container
+    expose:
+      - "9000"
+    volumes:
+      - ./index.php:/var/www/index.php
